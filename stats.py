@@ -1,6 +1,7 @@
 import typer
 import networkit as nk
 import pandas as pd
+import os
 
 from enum import Enum
 
@@ -23,6 +24,9 @@ def main(
     resolution: float = typer.Option(-1, "--resolution", "-g"),
 
 ): 
+    base, ext = os.path.splitext(existing_clustering)
+    outfile = base + '_stats.csv'
+
     print("Loading clusters")
 
     # (VR) Check -g and -k parameters for Leiden and IKC respectively
@@ -64,9 +68,14 @@ def main(
     cpms = [global_graph.cpm(cluster, resolution) for cluster in clusters]
 
     print("Done")
-    
+
+    print("Writing to output file...")
+
     df = pd.DataFrame(list(zip(ids, modularities, cpms)),
                columns =['Cluster', 'Modularity', 'CPM Score'])
+    df.to_csv(outfile, index=False)
+
+    print("Done")
 
 
 
