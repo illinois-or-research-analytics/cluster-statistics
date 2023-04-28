@@ -191,6 +191,12 @@ class Graph(AbstractGraph):
         ds = sum(self._data.degree(n) for n in g.subset)
         return (ls / big_l) - (ds / (2 * big_l)) ** 2
 
+    def cpm(self, g: IntangibleSubgraph, resolution: int) -> float:
+        e_c = g.count_edges(self)
+        n_c = len(g.subset)
+        exp = n_c*(n_c - 1) / 2
+        return e_c - resolution * exp
+
     @staticmethod
     def from_space_edgelist(filepath: str, index=""):
         return Graph(nk.graphio.readGraph(filepath, nk.Format.EdgeListSpaceZero), index)
