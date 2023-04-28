@@ -1,9 +1,16 @@
 import typer
 
+from enum import Enum
+
 from clusterers.abstract_clusterer import AbstractClusterer
 from clusterers.ikc_wrapper import IkcClusterer
 from clusterers.leiden_wrapper import LeidenClusterer, Quality
 
+class ClustererSpec(str, Enum):
+    """ (VR) Container for Clusterer Specification """  
+    leiden = "leiden"
+    ikc = "ikc"
+    leiden_mod = "leiden_mod"
 
 def main(
     existing_clustering: str = typer.Option(..., "--existing-clustering", "-e"),
