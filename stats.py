@@ -27,7 +27,7 @@ def main(
     base, ext = os.path.splitext(existing_clustering)
     outfile = base + '_stats.csv'
 
-    print("Loading clusters")
+    print("Loading clusters...")
 
     # (VR) Check -g and -k parameters for Leiden and IKC respectively
     if clusterer_spec == ClustererSpec.leiden:
@@ -68,6 +68,14 @@ def main(
     cpms = [global_graph.cpm(cluster, resolution) for cluster in clusters]
 
     print("Done")
+
+    print("Computing overall stats...")
+
+    m = global_graph.m()
+
+    ids.append("Overall")
+    modularities.append(1/(2*m)*sum(modularities))
+    cpms.append(sum(cpms))
 
     print("Writing to output file...")
 
