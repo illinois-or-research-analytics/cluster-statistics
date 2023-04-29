@@ -9,6 +9,7 @@ from clusterers.abstract_clusterer import AbstractClusterer
 from clusterers.ikc_wrapper import IkcClusterer
 from clusterers.leiden_wrapper import LeidenClusterer, Quality
 from graph import Graph, IntangibleSubgraph, RealizedSubgraph
+from mincut import viecut
 
 class ClustererSpec(str, Enum):
     """ (VR) Container for Clusterer Specification """  
@@ -42,6 +43,7 @@ def main(
 
     clusters = clusterer.from_existing_clustering(existing_clustering)
     ids = [cluster.index for cluster in clusters]
+    ns = [cluster.n() for cluster in clusters]
 
     print("Done")
 
@@ -52,6 +54,7 @@ def main(
     nk_graph = edgelist_reader.read(input)
 
     global_graph = Graph(nk_graph, "")
+    ms = [cluster.count_edges(global_graph) for cluster in clusters]
 
     print("Done")
 
@@ -69,6 +72,16 @@ def main(
 
     print("Done")
 
+    print("Realizing clusters...")
+
+    clusters = [cluster.realize(global_graph) for cluster in clusters]
+
+    print("Done")
+
+    print("Computing mincut...")
+
+    mincuts = [viecut(cluster).get_cut_size() for cluster in clusters]
+
     print("Computing overall stats...")
 
     m = global_graph.m()
@@ -76,11 +89,14 @@ def main(
     ids.append("Overall")
     modularities.append(1/(2*m)*sum(modularities))
     cpms.append(sum(cpms))
+    ns.append(global_graph.n())
+    ms.append(m)
+    mincuts.append(None)
 
     print("Writing to output file...")
 
-    df = pd.DataFrame(list(zip(ids, modularities, cpms)),
-               columns =['Cluster', 'Modularity', 'CPM Score'])
+    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts)),
+               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity'])
     df.to_csv(outfile, index=False)
 
     print("Done")
