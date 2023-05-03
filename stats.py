@@ -29,7 +29,6 @@ def main(
     outfile = base + '_stats.csv'
 
     print("Loading clusters...")
-
     # (VR) Check -g and -k parameters for Leiden and IKC respectively
     if clusterer_spec == ClustererSpec.leiden:
         assert resolution != -1, "Leiden requires resolution"
@@ -44,64 +43,61 @@ def main(
     clusters = clusterer.from_existing_clustering(existing_clustering)
     ids = [cluster.index for cluster in clusters]
     ns = [cluster.n() for cluster in clusters]
-
     print("Done")
 
     print("Loading graph...")
-
     # (VR) Load full graph into Graph object
     edgelist_reader = nk.graphio.EdgeListReader("\t", 0)
     nk_graph = edgelist_reader.read(input)
 
     global_graph = Graph(nk_graph, "")
     ms = [cluster.count_edges(global_graph) for cluster in clusters]
-
     print("Done")
 
     # clusters = [cluster.realize(global_graph) for cluster in clusters]
 
     print("Computing modularity...")
-
     modularities = [global_graph.modularity_of(cluster) for cluster in clusters]
-
     print("Done")
 
     print("Computing CPM score...")
-
     cpms = [global_graph.cpm(cluster, resolution) for cluster in clusters]
-
     print("Done")
 
     print("Realizing clusters...")
-
     clusters = [cluster.realize(global_graph) for cluster in clusters]
-
     print("Done")
 
     print("Computing mincut...")
-
     mincuts = [viecut(cluster).get_cut_size() for cluster in clusters]
+    print("Done")
+
+    print("Computing k-truss...")
+    ktruss_vals = [cluster.ktruss() for cluster in clusters]
+    # ktruss_nodes = []
+    # for cluster in clusters:
+    #     val, nodes = cluster.ktruss()
+    #     ktruss_vals.append(val)
+    #     ktruss_nodes.append(nodes)
+    print("Done")
 
     print("Computing overall stats...")
-
     m = global_graph.m()
-
     ids.append("Overall")
     modularities.append(1/(2*m)*sum(modularities))
     cpms.append(sum(cpms))
     ns.append(global_graph.n())
     ms.append(m)
     mincuts.append(None)
-
-    print("Writing to output file...")
-
-    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts)),
-               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity'])
-    df.to_csv(outfile, index=False)
-
+    ktruss_vals.append(None)
+    # ktruss_nodes.append(None)
     print("Done")
 
-
+    print("Writing to output file...")
+    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, ktruss_vals)),
+               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'ktruss_vals'])
+    df.to_csv(outfile, index=False)
+    print("Done")
 
 def entry_point():
     typer.run(main)

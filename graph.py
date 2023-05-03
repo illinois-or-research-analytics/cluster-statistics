@@ -5,6 +5,7 @@ from typing_extensions import Self
 import networkit as nk
 from collections import defaultdict
 from typing import Dict, Iterator, List, Sequence, Tuple, Union
+import networkx as nx
 
 from clusterers.abstract_clusterer import AbstractClusterer
 import mincut
@@ -14,6 +15,8 @@ from functools import cache, cached_property
 from typing import Protocol
 
 from sys import path
+path.append('tools')
+import ktruss
 path.append('tools/python-mincut/build')
 path.append('tools/python-mincut/src')
 from mincut_wrapper import MincutResult
@@ -191,6 +194,12 @@ class Graph(AbstractGraph):
         ds = sum(self._data.degree(n) for n in g.subset)
         return (ls / big_l) - (ds / (2 * big_l)) ** 2
 
+    def modularity_def2(self, g: IntangibleSubgraph, resolution: int) -> float:
+        e_c = g.count_edges(self)
+        m = self.m()
+        ds = sum(self._data.degree(n) for n in g.subset)
+        return e_c - resolution * (ds**2/(2*m))
+
     def cpm(self, g: IntangibleSubgraph, resolution: int) -> float:
         e_c = g.count_edges(self)
         n_c = len(g.subset)
@@ -312,6 +321,12 @@ class RealizedSubgraph(AbstractGraph):
 
     def nodes(self):
         yield from self.nodeset
+
+    def ktruss(self):
+        G_nx = nx.from_dict_of_lists(self.adj)
+        max_k = ktruss.find_max_k_truss(G_nx)
+        # nodes = nx.k_truss(G_nx, k=max_k).nodes
+        return max_k #, nodes
 
     @cache
     def mcd(self) -> int:
