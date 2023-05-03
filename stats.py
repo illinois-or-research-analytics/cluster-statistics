@@ -4,6 +4,7 @@ import pandas as pd
 import os
 
 from enum import Enum
+from numpy import log10
 
 from clusterers.abstract_clusterer import AbstractClusterer
 from clusterers.ikc_wrapper import IkcClusterer
@@ -70,6 +71,7 @@ def main(
 
     print("Computing mincut...")
     mincuts = [viecut(cluster).get_cut_size() for cluster in clusters]
+    mincuts_normalized = [mincut/log10(ns[i]) for i, mincut in enumerate(mincuts)]
     print("Done")
 
     print("Computing k-truss...")
@@ -94,8 +96,8 @@ def main(
     print("Done")
 
     print("Writing to output file...")
-    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, ktruss_vals)),
-               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'ktruss_vals'])
+    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, ktruss_vals)),
+               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'ktruss_vals'])
     df.to_csv(outfile, index=False)
     print("Done")
 
