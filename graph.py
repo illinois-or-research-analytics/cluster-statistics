@@ -328,6 +328,10 @@ class RealizedSubgraph(AbstractGraph):
         # nodes = nx.k_truss(G_nx, k=max_k).nodes
         return max_k #, nodes
 
+    def retrieve_ktruss_nodes(self, k):
+        G_nx = nx.from_dict_of_lists(self.adj)
+        return list(nx.k_truss(G_nx, k=k).nodes)
+
     @cache
     def mcd(self) -> int:
         if self.n() == 0:
