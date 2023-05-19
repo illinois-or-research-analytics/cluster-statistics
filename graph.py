@@ -383,6 +383,22 @@ class RealizedSubgraph(AbstractGraph):
         heavy = RealizedSubgraph(IntangibleSubgraph(mincut_res.get_heavy_partition(), self.index + "b"), self._graph)
         return light, heavy
 
+    def internal_degree(self, u, graph: Graph) -> int:
+        return sum(1 for v in graph._data.iterNeighbors(u) if v in self.nodeset)
+
+    def get_border_edges(self, graph: Graph):
+        ret = 0
+        for v in self.nodeset:
+            neighbors = sum(1 for u in graph.neighbors(v) if u not in self.nodeset)
+            ret += neighbors
+        return ret
+
+    def conductance(self, graph):
+        num = self.get_border_edges(graph)
+        deg_sum = sum(graph.degree(v) for v in self.nodeset)
+        den = min(deg_sum, 2*graph.m() - deg_sum)
+        return num/den
+
     @property
     def continuous_ids(self):
         if self._dirty:

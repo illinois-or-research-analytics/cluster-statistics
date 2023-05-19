@@ -70,34 +70,41 @@ def main(
     print("Done")
 
     print("Computing mincut...")
-    mincuts = [viecut(cluster).get_cut_size() for cluster in clusters]
+    mincut_results = [viecut(cluster) for cluster in clusters]
+    mincuts = [result.get_cut_size() for result in mincut_results]
     mincuts_normalized = [mincut/log10(ns[i]) for i, mincut in enumerate(mincuts)]
+    print("Done")
+
+    print("Computing conductance...")
+    conductances = []
+    for i, cluster in enumerate(clusters):
+        conductances.append(cluster.conductance(global_graph))
     print("Done")
 
     print("Computing k-truss...")
     ktruss_vals = [cluster.ktruss() for cluster in clusters]
-    # ktruss_nodes = []
-    # for cluster in clusters:
-    #     val, nodes = cluster.ktruss()
-    #     ktruss_vals.append(val)
-    #     ktruss_nodes.append(nodes)
+    for cluster in clusters:
+        val = cluster.ktruss()
+        ktruss_vals.append(val)
     print("Done")
 
     print("Computing overall stats...")
     m = global_graph.m()
     ids.append("Overall")
-    modularities.append(1/(2*m)*sum(modularities))
+    modularities.append(sum(modularities))
     cpms.append(sum(cpms))
     ns.append(global_graph.n())
     ms.append(m)
     mincuts.append(None)
+    mincuts_normalized.append(None)
     ktruss_vals.append(None)
+    conductances.append(None)
     # ktruss_nodes.append(None)
     print("Done")
 
     print("Writing to output file...")
-    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, ktruss_vals)),
-               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'ktruss_vals'])
+    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances, ktruss_vals)),
+               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
     df.to_csv(outfile, index=False)
     print("Done")
 
