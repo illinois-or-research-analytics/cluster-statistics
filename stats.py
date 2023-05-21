@@ -83,9 +83,6 @@ def main(
 
     print("Computing k-truss...")
     ktruss_vals = [cluster.ktruss() for cluster in clusters]
-    for cluster in clusters:
-        val = cluster.ktruss()
-        ktruss_vals.append(val)
     print("Done")
 
     print("Computing overall stats...")
