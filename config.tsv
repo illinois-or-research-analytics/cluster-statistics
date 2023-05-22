@@ -1,0 +1,4 @@
+../benchmarks/citp_post01.tsv   0.1     leiden  
+../benchmarks/citp_post001.tsv  0.001   leiden
+../benchmarks/citp_pre01.tsv    0.1     leiden
+../benchmarks/citp_pre001.tsv   0.001   leiden
