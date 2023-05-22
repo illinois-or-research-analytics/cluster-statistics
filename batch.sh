@@ -1,5 +1,6 @@
 #!/bin/bash
 global_graph=$1
+out_dir=$2
 
 # Read the specified column into a shell array
 clusterings=($(awk -F' ' '{print $1}' config.tsv))
@@ -16,3 +17,5 @@ do
 
     python3 stats.py -i $global_graph -e $clustering -c $clusterer -g $resolution
 done
+
+python3 batch_stats.py $out_dir $global_graph
