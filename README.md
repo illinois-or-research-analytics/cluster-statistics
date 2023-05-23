@@ -21,3 +21,8 @@ To collect a table of per-cluster statistics for a single clustering, run `stats
 - `-c` or `--clusterer`: The clustering algorithm used. Choose from `leiden, leiden_mod, ikc`.
 - `-k` or `--k`: _Only required if the clusterer is IKC_. The `k` parameter used with IKC.
 - `-g` or `--resolution`: _Only required if the clusterer is Leiden or Leiden with Modularity (leiden_mod)_. The resolution parameter used with Leiden.
+  
+So if I want to analyse a leiden resolution 0.01 clustering of CEN, I simply run the following command.
+```
+python3 stats.py -i cen_cleaned.tsv -e cen_leiden.01_nontree_n10_clusters_cm.txt -c leiden -g 0.01
+```
