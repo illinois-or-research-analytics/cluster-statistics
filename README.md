@@ -35,6 +35,6 @@ Output will be in the form of a table. Each row will contain stats on a single c
 - `modularity`
 - `cpm_score`
 - `connectivity`: size of the minimum cut in the cluster
-- `connectivity_normalized`: mincut divided by $$log_{10}n$$
+- `connectivity_normalized`: mincut divided by $log_{10}n$
 - `conductance`
-- `max_ktruss`: largest $$k$$ such that there exists a subgraph such that every edge is adjacent to $$k-2$$ triangles.
+- `max_ktruss`: largest $k$ such that there exists a subgraph such that every edge is adjacent to $k-2$ triangles.
