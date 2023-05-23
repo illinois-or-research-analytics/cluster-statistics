@@ -14,7 +14,7 @@ Simply clone this repository and run `setup.sh` via the following command:
 ./setup.sh
 ```
 ## Usage
-### Collecting stats on a single clustering
+### `stats.py`: Collecting stats on a single clustering
 To collect a table of per-cluster statistics for a single clustering, run `stats.py`. `stats.py` takes in the following arguments:
 - `-i` or `--input`: The whole network that was clustered. This is a 2-column `.tsv` containing an edge list.
 - `-e` or `--existing-clustering`: The clustering to report statistics. This is a 2-column `.tsv` containing `node_id, cluster_id` pairs.
@@ -26,10 +26,19 @@ So if I want to analyse a Leiden resolution 0.01 clustering of CEN, I simply run
 ```
 python3 stats.py -i cen_cleaned.tsv -e cen_leiden.01_nontree_n10_clusters_cm.txt -c leiden -g 0.01
 ```
-### Returning k-truss nodes
+### `ktrusses.py`: Returning k-truss nodes
 Simply take the same command from `stats.py` and replace `stats.py` with `ktrusses.py`. Here is a command to get the k-truss nodes from the statistics output from above:
 ```
 python3 ktrusses.py -i cen_cleaned.tsv -e cen_leiden.01_nontree_n10_clusters_cm.txt -c leiden -g 0.01
+```
+### `summarize.py`: Getting the summary of a single clustering
+To get a summary of a single clustering using a `stats.py` output file as input, and it will return statistics for the overall clustering. The command format is as follows:
+```
+python3 summarize.py {stats_output.csv}
+```
+So for the above example, you would run:
+```
+python3 summarize.py cen_leiden.01_nontree_n10_clusters_cm_stats.csv
 ```
 ## Outputs
 ### `stats.py`
@@ -48,3 +57,9 @@ This will be a three column table in a file called `{clustering_name}_ktruss.csv
 - `cluster`
 - `ktruss_vals`: The value of k (this will repeat for as many rows as there are nodes in the k-truss
 - `ktruss_nodes`: The node in the max k-truss of the cluster
+### `summarize.py`
+This output will be in the form of a series containing the following fields in this order:
+- `modularity`: sum of modularity scores across clusters
+- `cpm_score`: sum of CPM scores
+- `mincuts_{min,q1,med,q3,max}`: these 5 separate values contain a distribution of mincut sizes
+- `mincuts_{min,q1,med,q3,max}_normalized`: same by normalized by $log_{10}n$ where $n$ is per cluster
