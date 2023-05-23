@@ -13,3 +13,11 @@ Simply clone this repository and run `setup.sh` via the following command:
 ```
 ./setup.sh
 ```
+## Usage
+### Collecting Stats on a Single Clustering
+To collect a table of per-cluster statistics for a single clustering, run `stats.py`. `stats.py` takes in the following arguments:
+- `-i` or `--input`: The whole network that was clustered. This is a 2-column `.tsv` containing an edge list.
+- `-e` or `--existing-clustering`: The clustering to report statistics. This is a 2-column `.tsv` containing `node_id, cluster_id` pairs.
+- `-c` or `--clusterer`: The clustering algorithm used. Choose from `leiden, leiden_mod, ikc`.
+- `-k` or `--k`: _Only required if the clusterer is IKC_. The `k` parameter used with IKC.
+- `-g` or `--resolution`: _Only required if the clusterer is Leiden or Leiden with Modularity (leiden_mod)_. The resolution parameter used with Leiden.
