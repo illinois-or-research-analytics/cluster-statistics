@@ -40,6 +40,22 @@ So for the above example, you would run:
 ```
 python3 summarize.py cen_leiden.01_nontree_n10_clusters_cm_stats.csv
 ```
+### `batch.sh`: Getting a table of summary statistics for a batch of clusters
+If you have multiple clustering files that you want to get a table of summary statistics on, you can run `batch.sh`. First you will need to modify `config.tsv` to contain 3 columns in this order from left to right:
+- clustering
+- resolution
+- clusterer
+The following is an example `config.tsv`:
+```
+../benchmarks/citp_post01.tsv   0.1     leiden  
+../benchmarks/citp_post001.tsv  0.001   leiden
+../benchmarks/citp_pre01.tsv    0.1     leiden
+../benchmarks/citp_pre001.tsv   0.001   leiden
+```
+This will make `batch.sh` run on a batch of four Leiden clusterings on CIT across two resolutions. Now you can run `batch.sh` using the following command format:
+```
+batch.sh {network} {output directory (Optional)}
+```
 ## Outputs
 ### `stats.py`
 Output will be in the form of a table stored in a file called `{clustering_name}_stats.csv`. Each row will contain stats on a single cluster. The final row will contain overall statistics, inclusing number of nodes and edges in the network and total modularity and Constant-Potts Model (CPM) score. Each row will have the following measures:
