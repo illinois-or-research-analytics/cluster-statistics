@@ -54,7 +54,11 @@ The following is an example `config.tsv`:
 ```
 This will make `batch.sh` run on a batch of four Leiden clusterings on CIT across two resolutions. Now you can run `batch.sh` using the following command format:
 ```
-batch.sh {network} {output directory (Optional)}
+./batch.sh {network} {output directory (Optional: defaults to current directory)}
+```
+Here is an example command:
+```
+./batch.sh cen_cleaned.tsv
 ```
 ## Outputs
 ### `stats.py`
@@ -77,5 +81,21 @@ This will be a three column table in a file called `{clustering_name}_ktruss.csv
 This output will be in the form of a series containing the following fields in this order:
 - `modularity`: sum of modularity scores across clusters
 - `cpm_score`: sum of CPM scores
+- `mincuts_{min,q1,med,q3,max}`: these 5 separate values contain a distribution of mincut sizes
+- `mincuts_{min,q1,med,q3,max}_normalized`: same by normalized by $log_{10}n$ where $n$ is per cluster
+### `batch.sh`
+`batch.sh` will first run `stats.py` on each clustering in the batch, and then run `batch_stats.py` on the group of outputs. This means we will have as many `stats.py` outputs as there are lines in `config.tsv`, and we will also have a table of summary statistics that are indexed by the clustering file name, having the following columns:
+- `network`: the entire network being clustered (will repeat)
+- `num_clusters`: number of clusters in the clustering
+- `network_n`: the number of nodes in the network
+- `network_m`: the number of edges in the network
+- `total_n`: the total number of nodes across the clusters
+- `total_n`: the total number of edges across the clusters
+- `{min,q1,med,mean,q3,max}_cluster`: the distribution of cluster sizes in the clustering
+- `modularity`: total modularity across all clusters in the clustering
+- `modularity_{min,q1,med,mean,q3,max}`: distribution of modularities
+- `cpm_score`: total cpm score in the clustering
+- `cpm_{min,q1,med,mean,q3,max}`: distribution of cpms
+- `conductance_{min,q1,med,mean,q3,max}`: distribution of conductance scores
 - `mincuts_{min,q1,med,q3,max}`: these 5 separate values contain a distribution of mincut sizes
 - `mincuts_{min,q1,med,q3,max}_normalized`: same by normalized by $log_{10}n$ where $n$ is per cluster
