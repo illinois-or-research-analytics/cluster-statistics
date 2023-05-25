@@ -24,10 +24,14 @@ def main(
     clusterer_spec: ClustererSpec = typer.Option(..., "--clusterer", "-c"),
     k: int = typer.Option(-1, "--k", "-k"),
     resolution: float = typer.Option(-1, "--resolution", "-g"),
-    noktruss: bool = typer.Option(False, "--noktruss", "-n")
+    noktruss: bool = typer.Option(False, "--noktruss", "-n"),
+    output: str = typer.Option("", "--output", "-o")
 ): 
-    base, ext = os.path.splitext(existing_clustering)
-    outfile = base + '_stats.csv'
+    if output == "":
+        base, ext = os.path.splitext(existing_clustering)
+        outfile = base + '_stats.csv'
+    else:
+        outfile = output
 
     print("Loading clusters...")
     # (VR) Check -g and -k parameters for Leiden and IKC respectively
