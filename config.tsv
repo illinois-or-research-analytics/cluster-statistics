@@ -1,4 +1,4 @@
-../benchmarks/citp_post01.tsv   0.1     leiden  
-../benchmarks/citp_post001.tsv  0.001   leiden
-../benchmarks/citp_pre01.tsv    0.1     leiden
-../benchmarks/citp_pre001.tsv   0.001   leiden
+../benchmarks/S3.2_cm_ready_cen_leiden.0.01_i2_nontree_n10.tsv      0.01    leiden  
+../benchmarks/S3.2_cm_ready_cen_leiden.0.0001_i2_nontree_n10.tsv    0.0001   leiden
+../benchmarks/S5_cen_leiden.0.01_i2_filtered_final.tsv              0.01    leiden
+../benchmarks/S5_cen_leiden.0.0001_i2_filtered_final.tsv            0.0001   leiden

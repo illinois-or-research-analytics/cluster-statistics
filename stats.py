@@ -24,7 +24,7 @@ def main(
     clusterer_spec: ClustererSpec = typer.Option(..., "--clusterer", "-c"),
     k: int = typer.Option(-1, "--k", "-k"),
     resolution: float = typer.Option(-1, "--resolution", "-g"),
-
+    noktruss: bool = typer.Option(False, "--noktruss", "-n")
 ): 
     base, ext = os.path.splitext(existing_clustering)
     outfile = base + '_stats.csv'
@@ -81,9 +81,10 @@ def main(
         conductances.append(cluster.conductance(global_graph))
     print("Done")
 
-    print("Computing k-truss...")
-    ktruss_vals = [cluster.ktruss() for cluster in clusters]
-    print("Done")
+    if not noktruss:
+        print("Computing k-truss...")
+        ktruss_vals = [cluster.ktruss() for cluster in clusters]
+        print("Done")
 
     print("Computing overall stats...")
     m = global_graph.m()
@@ -94,14 +95,21 @@ def main(
     ms.append(m)
     mincuts.append(None)
     mincuts_normalized.append(None)
-    ktruss_vals.append(None)
+    if not noktruss:
+        ktruss_vals.append(None)
     conductances.append(None)
     # ktruss_nodes.append(None)
     print("Done")
 
     print("Writing to output file...")
-    df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances, ktruss_vals)),
-               columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+
+    if not noktruss:
+        df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances, ktruss_vals)),
+                columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+    else:
+        df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances)),
+                columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance'])
+
     df.to_csv(outfile, index=False)
     print("Done")
 
