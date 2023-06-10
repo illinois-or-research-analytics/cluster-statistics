@@ -122,10 +122,10 @@ def main(
     else:
         if not noktruss:
             df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, conductances, ktruss_vals)),
-                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+                    columns =['cluster', 'n', 'm', 'modularity', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
         else:
             df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, conductances)),
-                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance'])
+                    columns =['cluster', 'n', 'm', 'modularity', 'connectivity', 'connectivity_normalized', 'conductance'])
 
     df.to_csv(outfile, index=False)
     print("Done")
