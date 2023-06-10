@@ -65,9 +65,10 @@ def main(
     modularities = [global_graph.modularity_of(cluster) for cluster in clusters]
     print("Done")
 
-    print("Computing CPM score...")
-    cpms = [global_graph.cpm(cluster, resolution) for cluster in clusters]
-    print("Done")
+    if resolution != -1:
+        print("Computing CPM score...")
+        cpms = [global_graph.cpm(cluster, resolution) for cluster in clusters]
+        print("Done")
 
     print("Realizing clusters...")
     clusters = [cluster.realize(global_graph) for cluster in clusters]
@@ -94,7 +95,11 @@ def main(
     m = global_graph.m()
     ids.append("Overall")
     modularities.append(sum(modularities))
-    cpms.append(sum(cpms))
+
+    if resolution != -1:
+        cpms.append(sum(cpms))
+
+
     ns.append(global_graph.n())
     ms.append(m)
     mincuts.append(None)
@@ -107,12 +112,20 @@ def main(
 
     print("Writing to output file...")
 
-    if not noktruss:
-        df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances, ktruss_vals)),
-                columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+    if resolution != -1:
+        if not noktruss:
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances, ktruss_vals)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+        else:
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance'])
     else:
-        df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances)),
-                columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance'])
+        if not noktruss:
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, conductances, ktruss_vals)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+        else:
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, conductances)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance'])
 
     df.to_csv(outfile, index=False)
     print("Done")
