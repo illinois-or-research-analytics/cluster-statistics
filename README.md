@@ -75,12 +75,12 @@ Output will be in the form of a table stored in a file called `{clustering_name}
 - `max_ktruss`: largest $k$ such that there exists a subgraph such that every edge is adjacent to $k-2$ triangles.
 ### `stats.py` `-ub` Output
 When you run `stats.py` with the `-ub` tag containing the `before.json` file from CM2Universal, we get two extra outputs:
-- *CSV*: A table with the 4 fields:
+- **CSV**: A table with the 4 fields:
     - `input_cluster`: The (non-extant) pre-CM++ cluster (this value can repeat)
     - `n`: The size of the cluster (this value can repeat)
     - `descendant`: The post-CM++ cluster that results from this input cluster
     - `desc_n`: The size of the post-CM++ cluster
-- *JSON*: It's an array where each entry has the following fields:
+- **JSON**: It's an array where each entry has the following fields:
     - `input_cluster`
     - `n`
     - `descendants`: an array with each element containing (k, v) pairs where the key is the descendant cluster id and the value is the size of the descendant cluster.
