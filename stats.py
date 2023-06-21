@@ -2,6 +2,7 @@ import typer
 import networkit as nk
 import pandas as pd
 import os
+import json
 
 from enum import Enum
 from numpy import log10
@@ -25,6 +26,7 @@ def main(
     k: int = typer.Option(-1, "--k", "-k"),
     resolution: float = typer.Option(-1, "--resolution", "-g"),
     noktruss: bool = typer.Option(False, "--noktruss", "-n"),
+    universal_before: str = typer.Option("", "--universal-before", "-ub"),
     output: str = typer.Option("", "--output", "-o")
 ): 
     if output == "":
@@ -129,6 +131,50 @@ def main(
 
     df.to_csv(outfile, index=False)
     print("Done")
+
+    if len(universal_before) > 0:
+        print("Writing extra outputs from CM2Universal")
+
+        cluster_sizes = {key: val for key, val in zip(ids, ns)}
+        
+        output_entries = []
+        with open(universal_before) as json_file:
+            before = json.load(json_file) 
+            for cluster in before:
+                if not cluster['extant']:
+                    output_entries.append({
+                        "input_cluster": cluster['label'],
+                        'n': len(cluster['nodes']),
+                        'descendants': {
+                            desc: cluster_sizes[desc]
+                            for desc in cluster['descendants']
+                        }
+                    })
+
+        # Specify the file path for the JSON output
+        json_file_path = outfile + '_to_universal.json'
+        csv_file_path = outfile + '_to_universal.csv'
+
+        # Get lines for the csv format
+        csv_lines = ['input_cluster,n,descendant,desc_n']
+        for entry in output_entries:
+            for descendant, desc_n in entry['descendants'].items():
+                csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},{descendant},{desc_n}')
+
+        print("\tWriting JSON")
+        # Write the array of dictionaries as formatted JSON to the file
+        with open(json_file_path, 'w') as json_file:
+            json.dump(output_entries, json_file, indent=4)
+        print("\tDone")
+
+        print("\tWriting CSV")
+        # Write the lines to the file
+        with open(csv_file_path, 'w') as file:
+            for line in csv_lines:
+                file.write(line + '\n')
+        print("\tDone")
+        print("Done")
+
 
 def entry_point():
     typer.run(main)
