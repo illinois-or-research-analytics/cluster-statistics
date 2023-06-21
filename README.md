@@ -21,6 +21,7 @@ To collect a table of per-cluster statistics for a single clustering, run `stats
 - `-c` or `--clusterer`: The clustering algorithm used. Choose from `leiden, leiden_mod, ikc`.
 - `-k` or `--k`: _Only required if the clusterer is IKC_. The `k` parameter used with IKC.
 - `-g` or `--resolution`: _Only required if the clusterer is Leiden or Leiden with Modularity (leiden_mod)_. The resolution parameter used with Leiden.
+- `-ub` or `--universal-before`: The `before.json` file that results from CM2Universal in CM/CM++
   
 So if I want to analyse a Leiden resolution 0.01 clustering of CEN, I simply run the following command.
 ```
@@ -72,6 +73,17 @@ Output will be in the form of a table stored in a file called `{clustering_name}
 - `connectivity_normalized`: mincut divided by $log_{10}n$
 - `conductance`
 - `max_ktruss`: largest $k$ such that there exists a subgraph such that every edge is adjacent to $k-2$ triangles.
+### `stats.py` `-ub` Output
+When you run `stats.py` with the `-ub` tag containing the `before.json` file from CM2Universal, we get two extra outputs:
+- *CSV*: A table with the 4 fields:
+    - `input_cluster`: The (non-extant) pre-CM++ cluster (this value can repeat)
+    - `n`: The size of the cluster (this value can repeat)
+    - `descendant`: The post-CM++ cluster that results from this input cluster
+    - `desc_n`: The size of the post-CM++ cluster
+- *JSON*: It's an array where each entry has the following fields:
+    - `input_cluster`
+    - `n`
+    - `descendants`: an array with each element containing (k, v) pairs where the key is the descendant cluster id and the value is the size of the descendant cluster.
 ### `ktrusses.py`
 This will be a three column table in a file called `{clustering_name}_ktruss.csv`. The three columns are:
 - `cluster`
