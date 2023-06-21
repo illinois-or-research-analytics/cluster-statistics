@@ -11,6 +11,7 @@ You will need the following:
 ### Installation
 Simply clone this repository and run `setup.sh` via the following command:
 ```
+git submodule update --init --recursive
 ./setup.sh
 ```
 ## Usage
