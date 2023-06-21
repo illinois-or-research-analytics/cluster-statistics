@@ -9,7 +9,7 @@ You will need the following:
 - `python39-devel` header to allow C++ interfacing with Python
 - gcc and g++ of any version
 ### Installation
-Simply clone this repository and run `setup.sh` via the following command:
+Simply clone this repository and run `setup.sh` via the following commands:
 ```
 git submodule update --init --recursive
 ./setup.sh
