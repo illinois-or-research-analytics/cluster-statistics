@@ -135,7 +135,7 @@ def main(
     if len(universal_before) > 0:
         print("Writing extra outputs from CM2Universal")
 
-        cluster_sizes = {key: val for key, val in zip(ids, ns)}
+        cluster_sizes = {key.replace('"', ''): val for key, val in zip(ids, ns)}
         
         output_entries = []
         with open(universal_before) as json_file:
@@ -148,6 +148,7 @@ def main(
                         'descendants': {
                             desc: cluster_sizes[desc]
                             for desc in cluster['descendants']
+                            if desc in cluster_sizes
                         }
                     })
 
@@ -158,8 +159,11 @@ def main(
         # Get lines for the csv format
         csv_lines = ['input_cluster,n,descendant,desc_n']
         for entry in output_entries:
-            for descendant, desc_n in entry['descendants'].items():
-                csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},{descendant},{desc_n}')
+            if len(entry['descendants']) == 0:
+                csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},,')
+            else:
+                for descendant, desc_n in entry['descendants'].items():
+                    csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},{descendant},{desc_n}')
 
         print("\tWriting JSON")
         # Write the array of dictionaries as formatted JSON to the file
