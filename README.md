@@ -1,5 +1,20 @@
 # cluster-statistics
 Given a clustering in a .tsv format with two columns `node_id, cluster_id`, this software package will report both per-cluster statistics as well as summary statistics. The user is also able to run on a single clustering or batch process multiple clusterings into a table of summary statistics.
+- [cluster-statistics](#cluster-statistics)
+  - [Setup](#setup)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Usage](#usage)
+    - [`stats.py`: Collecting stats on a single clustering](#statspy-collecting-stats-on-a-single-clustering)
+    - [`ktrusses.py`: Returning k-truss nodes](#ktrussespy-returning-k-truss-nodes)
+    - [`summarize.py`: Getting the summary of a single clustering](#summarizepy-getting-the-summary-of-a-single-clustering)
+    - [`batch.sh`: Getting a table of summary statistics for a batch of clusters](#batchsh-getting-a-table-of-summary-statistics-for-a-batch-of-clusters)
+  - [Outputs](#outputs)
+    - [`stats.py`](#statspy)
+    - [`stats.py` `-ub` Output](#statspy--ub-output)
+    - [`ktrusses.py`](#ktrussespy)
+    - [`summarize.py`](#summarizepy)
+    - [`batch.sh`](#batchsh)
 ## Setup
 ### Prerequisites
 You will need the following:
