@@ -145,11 +145,18 @@ def main(
                     output_entries.append({
                         "input_cluster": cluster['label'],
                         'n': len(cluster['nodes']),
+                        'extant': False,
                         'descendants': {
                             desc: cluster_sizes[desc]
                             for desc in cluster['descendants']
                             if desc in cluster_sizes
                         }
+                    })
+                else:
+                    output_entries.append({
+                        "input_cluster": cluster['label'],
+                        'n': len(cluster['nodes']),
+                        'extant': True
                     })
 
         # Specify the file path for the JSON output
@@ -157,13 +164,15 @@ def main(
         csv_file_path = outfile + '_to_universal.csv'
 
         # Get lines for the csv format
-        csv_lines = ['input_cluster,n,descendant,desc_n']
+        csv_lines = ['input_cluster,n,descendant,desc_n,extant']
         for entry in output_entries:
-            if len(entry['descendants']) == 0:
-                csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},,')
+            if entry['extant']:
+                csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},,,1')
+            elif len(entry['descendants']) == 0:
+                csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},,,0')
             else:
                 for descendant, desc_n in entry['descendants'].items():
-                    csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},{descendant},{desc_n}')
+                    csv_lines.append(f'{entry["input_cluster"]},{entry["n"]},{descendant},{desc_n},0')
 
         print("\tWriting JSON")
         # Write the array of dictionaries as formatted JSON to the file
