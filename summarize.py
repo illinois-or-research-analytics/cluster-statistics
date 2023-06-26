@@ -73,7 +73,6 @@ def summarize_stats(filename):
     mincuts_normalized_q3 = mincuts_normalized.quantile(0.75)
     mincuts_normalized_mean = mincuts_normalized.mean()
 
-    coverage = round(total_n/n, 3)
     coverage_2 = round(total_n2/n, 3)
     coverage_11 = round(total_n11/n, 3)
 
@@ -98,8 +97,7 @@ def summarize_stats(filename):
         'mincuts_mean': mincuts_mean,
         'mincuts_normalized_dist': [mincuts_normalized_min, mincuts_normalized_q1, mincuts_normalized_med, mincuts_normalized_q3, mincuts_normalized_max],
         'mincuts_mean_normalized': mincuts_normalized_mean,
-        'node_coverage': coverage,
-        'node_coverage_no_singletons': coverage_2,
+        'node_coverage': coverage_2,
         'node_coverage_gr10': coverage_11
     })
 
