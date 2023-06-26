@@ -107,10 +107,26 @@ This will be a three column table in a file called `{clustering_name}_ktruss.csv
 - `ktruss_nodes`: The node in the max k-truss of the cluster
 ### `summarize.py`
 This output will be in the form of a series containing the following fields in this order:
-- `modularity`: sum of modularity scores across clusters
-- `cpm_score`: sum of CPM scores
-- `mincuts_{min,q1,med,q3,max}`: these 5 separate values contain a distribution of mincut sizes
-- `mincuts_{min,q1,med,q3,max}_normalized`: same by normalized by $log_{10}n$ where $n$ is per cluster
+- `network`: File Path of full network
+- `num_clusters`: Number of clusters
+- `network_n`: Nodes in network
+- `network_m`: Edges in network
+- `total_n`: Total nodes in cluster
+- `total_m`: Total edges in cluster
+- `cluster_size_dist`: Distribution of cluster sizes (min, Q1, med, Q3, max)
+- `mean_cluster_size`: Mean Cluster size
+- `total_modularity`: Total modularity across clusters
+- `modularity_dist`: Distribution of modularities (min, Q1, med, Q3, max)
+- `modularity_mean`: Mean Modularity
+- `total_cpm_score`: Total CPM across clusters
+- `cpm_dist`: CPM Distribution (min, Q1, med, Q3, max)
+- `cpm_mean`: Mean CPM Score
+- `conductance_dist`: Conductance Distribution (min, Q1, med, Q3, max)
+- `conductance_mean`: Mean conductance score
+- `mincuts_dist`: Connectivity Distribution (min, Q1, med, Q3, max)
+- `mincuts_mean`: Mean connectivity score
+- `mincuts_normalized_dist`: Normalized connectivity Distribution (min, Q1, med, Q3, max)
+- `mincuts_mean_normalized`: Mean Normalized connectivity
 - `node_coverage`: The percent of the network's nodes included in the clustering
 - `node_coverage_no_singletons`: The percent of the network's nodes included in the clustering when clusters with only one node aren't considered
 - `node_coverage_gr10`: The percent of the network's nodes included in the clustering when only clusters of size greater of than 10 nodes are considered
