@@ -1,7 +1,6 @@
 import os
 
 import pandas as pd
-import numpy as np
 
 from sys import argv
 
@@ -19,6 +18,9 @@ def summarize_stats(filename):
 
     total_n = node_dist.sum()
     total_m = stats.iloc[:-1]['m'].sum()
+
+    total_n2 = node_dist[node_dist > 1].sum()
+    total_n11 = node_dist[node_dist > 10].sum()
 
     min_cluster = node_dist.min()
     q1_cluster = node_dist.quantile(0.25)
@@ -71,6 +73,10 @@ def summarize_stats(filename):
     mincuts_normalized_q3 = mincuts_normalized.quantile(0.75)
     mincuts_normalized_mean = mincuts_normalized.mean()
 
+    coverage = round(total_n/n, 3)
+    coverage_2 = round(total_n2/n, 3)
+    coverage_11 = round(total_n11/n, 3)
+
     summary_stats = pd.Series({
         'network': argv[2],
         'num_clusters': stats.shape[0] - 1,
@@ -92,6 +98,9 @@ def summarize_stats(filename):
         'mincuts_mean': mincuts_mean,
         'mincuts_normalized_dist': [mincuts_normalized_min, mincuts_normalized_q1, mincuts_normalized_med, mincuts_normalized_q3, mincuts_normalized_max],
         'mincuts_mean_normalized': mincuts_normalized_mean,
+        'node_coverage': coverage,
+        'node_coverage_no_singletons': coverage_2,
+        'node_coverage_gr10': coverage_11
     })
 
     return summary_stats
