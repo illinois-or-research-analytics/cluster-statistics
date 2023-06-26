@@ -51,11 +51,11 @@ python3 ktrusses.py -i cen_cleaned.tsv -e cen_leiden.01_nontree_n10_clusters_cm.
 ### `summarize.py`: Getting the summary of a single clustering
 To get a summary of a single clustering using a `stats.py` output file as input, and it will return statistics for the overall clustering. The command format is as follows:
 ```
-python3 summarize.py {stats_output.csv}
+python3 summarize.py {stats_output.csv} {cleaned_network.tsv}
 ```
 So for the above example, you would run:
 ```
-python3 summarize.py cen_leiden.01_nontree_n10_clusters_cm_stats.csv
+python3 summarize.py cen_leiden.01_nontree_n10_clusters_cm_stats.csv cen_cleaned.tsv
 ```
 ### `batch.sh`: Getting a table of summary statistics for a batch of clusters
 If you have multiple clustering files that you want to get a table of summary statistics on, you can run `batch.sh`. First you will need to modify `config.tsv` to contain 3 columns in this order from left to right:
@@ -111,6 +111,9 @@ This output will be in the form of a series containing the following fields in t
 - `cpm_score`: sum of CPM scores
 - `mincuts_{min,q1,med,q3,max}`: these 5 separate values contain a distribution of mincut sizes
 - `mincuts_{min,q1,med,q3,max}_normalized`: same by normalized by $log_{10}n$ where $n$ is per cluster
+- `node_coverage`: The percent of the network's nodes included in the clustering
+- `node_coverage_no_singletons`: The percent of the network's nodes included in the clustering when clusters with only one node aren't considered
+- `node_coverage_gr10`: The percent of the network's nodes included in the clustering when only clusters of size greater of than 10 nodes are considered
 ### `batch.sh`
 `batch.sh` will first run `stats.py` on each clustering in the batch, and then run `batch_stats.py` on the group of outputs. This means we will have as many `stats.py` outputs as there are lines in `config.tsv`, and we will also have a table of summary statistics that are indexed by the clustering file name, having the following columns:
 - `network`: the entire network being clustered (will repeat)
