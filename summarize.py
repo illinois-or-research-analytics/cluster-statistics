@@ -38,16 +38,19 @@ def summarize_stats(filename):
     modularity_mean = modularities.mean()
     modularity_q3 = modularities.quantile(0.75)
     modularity_max = modularities.max()
+    
+    try:
+        cpm_score = overall['cpm_score']
+        cpm_scores = stats.iloc[:-1]['cpm_score']
 
-    cpm_score = overall['cpm_score']
-    cpm_scores = stats.iloc[:-1]['cpm_score']
-
-    cpm_min = cpm_scores.min()
-    cpm_q1 = cpm_scores.quantile(0.25)
-    cpm_med = cpm_scores.median()
-    cpm_mean = cpm_scores.mean()
-    cpm_q3 = cpm_scores.quantile(0.75)
-    cpm_max = cpm_scores.max()
+        cpm_min = cpm_scores.min()
+        cpm_q1 = cpm_scores.quantile(0.25)
+        cpm_med = cpm_scores.median()
+        cpm_mean = cpm_scores.mean()
+        cpm_q3 = cpm_scores.quantile(0.75)
+        cpm_max = cpm_scores.max()
+    except:
+        None
 
     conductances = stats.iloc[:-1]['conductance']
     conductance_min = conductances.min()
@@ -76,30 +79,53 @@ def summarize_stats(filename):
     coverage_2 = round(total_n2/n, 3)
     coverage_11 = round(total_n11/n, 3)
 
-    summary_stats = pd.Series({
-        'network': argv[2],
-        'num_clusters': stats.shape[0] - 1,
-        'network_n': n,
-        'network_m': m,
-        'total_n': total_n,
-        'total_m': total_m,
-        'cluster_size_dist': [min_cluster, q1_cluster, med_cluster, q3_cluster, max_cluster],
-        'mean_cluster_size': mean_cluster,
-        'total_modularity': modularity,
-        'modularity_dist': [modularity_min, modularity_q1, modularity_med, modularity_q3, modularity_max],
-        'modularity_mean': modularity_mean,
-        'total_cpm_score': cpm_score,
-        'cpm_dist': [cpm_min, cpm_q1, cpm_med, cpm_q3, cpm_max],
-        'cpm_mean': cpm_mean,
-        'conductance_dist': [conductance_min, conductance_q1, conductance_med, conductance_q3, conductance_max],
-        'conductance_mean': conductance_mean,
-        'mincuts_dist': [mincuts_min, mincuts_q1, mincuts_med, mincuts_q3, mincuts_max],
-        'mincuts_mean': mincuts_mean,
-        'mincuts_normalized_dist': [mincuts_normalized_min, mincuts_normalized_q1, mincuts_normalized_med, mincuts_normalized_q3, mincuts_normalized_max],
-        'mincuts_mean_normalized': mincuts_normalized_mean,
-        'node_coverage': coverage_2,
-        'node_coverage_gr10': coverage_11
-    })
+    try:
+        summary_stats = pd.Series({
+            'network': argv[2],
+            'num_clusters': stats.shape[0] - 1,
+            'network_n': n,
+            'network_m': m,
+            'total_n': total_n,
+            'total_m': total_m,
+            'cluster_size_dist': [min_cluster, q1_cluster, med_cluster, q3_cluster, max_cluster],
+            'mean_cluster_size': mean_cluster,
+            'total_modularity': modularity,
+            'modularity_dist': [modularity_min, modularity_q1, modularity_med, modularity_q3, modularity_max],
+            'modularity_mean': modularity_mean,
+            'total_cpm_score': cpm_score,
+            'cpm_dist': [cpm_min, cpm_q1, cpm_med, cpm_q3, cpm_max],
+            'cpm_mean': cpm_mean,
+            'conductance_dist': [conductance_min, conductance_q1, conductance_med, conductance_q3, conductance_max],
+            'conductance_mean': conductance_mean,
+            'mincuts_dist': [mincuts_min, mincuts_q1, mincuts_med, mincuts_q3, mincuts_max],
+            'mincuts_mean': mincuts_mean,
+            'mincuts_normalized_dist': [mincuts_normalized_min, mincuts_normalized_q1, mincuts_normalized_med, mincuts_normalized_q3, mincuts_normalized_max],
+            'mincuts_mean_normalized': mincuts_normalized_mean,
+            'node_coverage': coverage_2,
+            'node_coverage_gr10': coverage_11
+        })
+    except:
+        summary_stats = pd.Series({
+            'network': argv[2],
+            'num_clusters': stats.shape[0] - 1,
+            'network_n': n,
+            'network_m': m,
+            'total_n': total_n,
+            'total_m': total_m,
+            'cluster_size_dist': [min_cluster, q1_cluster, med_cluster, q3_cluster, max_cluster],
+            'mean_cluster_size': mean_cluster,
+            'total_modularity': modularity,
+            'modularity_dist': [modularity_min, modularity_q1, modularity_med, modularity_q3, modularity_max],
+            'modularity_mean': modularity_mean,
+            'conductance_dist': [conductance_min, conductance_q1, conductance_med, conductance_q3, conductance_max],
+            'conductance_mean': conductance_mean,
+            'mincuts_dist': [mincuts_min, mincuts_q1, mincuts_med, mincuts_q3, mincuts_max],
+            'mincuts_mean': mincuts_mean,
+            'mincuts_normalized_dist': [mincuts_normalized_min, mincuts_normalized_q1, mincuts_normalized_med, mincuts_normalized_q3, mincuts_normalized_max],
+            'mincuts_mean_normalized': mincuts_normalized_mean,
+            'node_coverage': coverage_2,
+            'node_coverage_gr10': coverage_11
+        })
 
     return summary_stats
 
