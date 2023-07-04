@@ -2,6 +2,7 @@ import typer
 import json
 
 import pandas as pd
+import numpy as np
 
 from os import path
 
@@ -69,6 +70,10 @@ def main(
         data = json.load(json_file)
         ub_data = pd.DataFrame(data)
 
+    # Edge case: if no cluster was touched by CM, there may not be a descendants column
+    if 'descendants' not in ub_data.columns:
+        ub_data['descendants'] = np.empty((len(ub_data), 0)).tolist()
+
     # Refine CM2Universal table
     ub_data['input_cluster_size'] = ub_data['nodes'].apply(lambda x: len(x))
     ub_data['active_descendants'] = ub_data['descendants'].apply(lambda x: [elem for elem in x if elem in desc_cluster_sizes['cluster_id'].tolist()])
@@ -78,6 +83,9 @@ def main(
     # Drop unneeded fields and bring arrray columns into multiple rows
     before_table = ub_data[['label', 'input_cluster_size', 'active_descendants', 'num_active_descendants', 'extant']]
     before_table = before_table.explode('active_descendants').reset_index(drop=True)
+
+    # Prevent errors on all extant clusterings by replacing none entries with nan
+    before_table['active_descendants'].fillna(np.nan, inplace=True)
 
     # Perform a table join
     final_table = pd.merge(before_table, desc_cluster_sizes, left_on='active_descendants', right_on='cluster_id', how='outer')
