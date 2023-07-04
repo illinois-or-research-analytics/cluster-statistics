@@ -1,5 +1,10 @@
 # Data Directories
 clustering_data/
+tau_comparison/
+test/
+cluster-fate/
+
+*.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
