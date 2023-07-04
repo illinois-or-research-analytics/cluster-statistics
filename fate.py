@@ -6,7 +6,15 @@ import pandas as pd
 from os import path
 
 def compute_ratio(row):
-    ''' Compute the ratio of descendant size to input cluster size '''
+    ''' Compute the ratio of descendant size to input cluster size 
+
+    rules
+    -----
+        - Degraded clusters have a size ratio of 0
+        - Extant clusters have a size ratio of 1
+    '''
+    if row['fate'] == 'degraded':
+        return 0
     if row['extant']:
         return 1
     return int(row['descendant_cluster_size'])/int(row['input_cluster_size'])
@@ -77,11 +85,11 @@ def main(
     final_table = final_table.drop('cluster_id', axis=1)
     final_table = final_table[final_table['extant'].notna()]
 
-    # Calculate size ratios
-    final_table['size_ratio'] = final_table.apply(compute_ratio, axis=1)
-
     # Calculate input cluster fate
     final_table['fate'] = final_table.apply(calc_fate, axis=1)
+
+    # Calculate size ratios
+    final_table['size_ratio'] = final_table.apply(compute_ratio, axis=1)
 
     # Write to csv
     final_table.to_csv(output_file, index=False)
