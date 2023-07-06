@@ -76,7 +76,8 @@ def main(
 
     # Refine CM2Universal table
     ub_data['input_cluster_size'] = ub_data['nodes'].apply(lambda x: len(x))
-    ub_data['active_descendants'] = ub_data['descendants'].apply(lambda x: [elem for elem in x if elem in desc_cluster_sizes['cluster_id'].tolist()])
+    desc_cluster_ids = set(desc_cluster_sizes['cluster_id'].tolist())
+    ub_data['active_descendants'] = ub_data['descendants'].apply(lambda x: [elem for elem in x if elem in desc_cluster_ids])
     ub_data['num_active_descendants'] = ub_data['active_descendants'].apply(lambda x: len(x))
     ub_data['active_descendants'] = ub_data['active_descendants'].apply(lambda x: [None] if len(x) == 0 else x)
 
