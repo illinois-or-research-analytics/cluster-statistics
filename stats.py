@@ -5,7 +5,8 @@ import os
 import json
 
 from enum import Enum
-from numpy import log10
+from numpy import log10, log2
+from typing import Dict, List
 
 from clusterers.abstract_clusterer import AbstractClusterer
 from clusterers.ikc_wrapper import IkcClusterer
@@ -19,11 +20,21 @@ class ClustererSpec(str, Enum):
     ikc = "ikc"
     leiden_mod = "leiden_mod"
 
+def from_existing_clustering(filepath) -> List[IntangibleSubgraph]:
+    ''' I just modified the original method to return a dict mapping from index to clustering '''
+    # node_id cluster_id format
+    clusters: Dict[str, IntangibleSubgraph] = {}
+    with open(filepath) as f:
+        for line in f:
+            node_id, cluster_id = line.split()
+            clusters.setdefault(
+                cluster_id, IntangibleSubgraph([], cluster_id)
+            ).subset.append(int(node_id))
+    return {key: val for key, val in clusters.items() if val.n() > 1}
+
 def main(
     input: str = typer.Option(..., "--input", "-i"),
     existing_clustering: str = typer.Option(..., "--existing-clustering", "-e"),
-    clusterer_spec: ClustererSpec = typer.Option(..., "--clusterer", "-c"),
-    k: int = typer.Option(-1, "--k", "-k"),
     resolution: float = typer.Option(-1, "--resolution", "-g"),
     noktruss: bool = typer.Option(False, "--noktruss", "-n"),
     universal_before: str = typer.Option("", "--universal-before", "-ub"),
@@ -36,18 +47,7 @@ def main(
         outfile = output
 
     print("Loading clusters...")
-    # (VR) Check -g and -k parameters for Leiden and IKC respectively
-    if clusterer_spec == ClustererSpec.leiden:
-        assert resolution != -1, "Leiden requires resolution"
-        clusterer = LeidenClusterer(resolution)
-    elif clusterer_spec == ClustererSpec.leiden_mod:
-        assert resolution == -1, "Leiden with modularity does not support resolution"
-        clusterer = LeidenClusterer(resolution, quality=Quality.modularity)
-    else:
-        assert k != -1, "IKC requires k"
-        clusterer = IkcClusterer(k)
-
-    clusters = clusterer.from_existing_clustering(existing_clustering)
+    clusters = from_existing_clustering(existing_clustering).values()
     ids = [cluster.index for cluster in clusters]
     ns = [cluster.n() for cluster in clusters]
     print("Done")
@@ -80,6 +80,8 @@ def main(
     mincut_results = [viecut(cluster) for cluster in clusters]
     mincuts = [result.get_cut_size() for result in mincut_results]
     mincuts_normalized = [mincut/log10(ns[i]) for i, mincut in enumerate(mincuts)]
+    mincuts_normalized_log2 = [mincut/log2(ns[i]) for i, mincut in enumerate(mincuts)]
+    mincuts_normalized_sqrt = [mincut/(ns[i]**0.5/5) for i, mincut in  enumerate(mincuts)]
     print("Done")
 
     print("Computing conductance...")
@@ -106,6 +108,8 @@ def main(
     ms.append(m)
     mincuts.append(None)
     mincuts_normalized.append(None)
+    mincuts_normalized_log2.append(None)
+    mincuts_normalized_sqrt.append(None)
     if not noktruss:
         ktruss_vals.append(None)
     conductances.append(None)
@@ -116,18 +120,18 @@ def main(
 
     if resolution != -1:
         if not noktruss:
-            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances, ktruss_vals)),
-                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, mincuts_normalized_log2, mincuts_normalized_sqrt, conductances, ktruss_vals)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized_log10(n)', 'connectivity_normalized_log2(n)', 'connectivity_normalized_sqrt(n)/5', 'conductance', 'max_ktruss'])
         else:
-            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, conductances)),
-                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized', 'conductance'])
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, cpms, mincuts, mincuts_normalized, mincuts_normalized_log2, mincuts_normalized_sqrt, conductances)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'cpm_score', 'connectivity', 'connectivity_normalized_log10(n)', 'connectivity_normalized_log2(n)', 'connectivity_normalized_sqrt(n)/5', 'conductance'])
     else:
         if not noktruss:
-            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, conductances, ktruss_vals)),
-                    columns =['cluster', 'n', 'm', 'modularity', 'connectivity', 'connectivity_normalized', 'conductance', 'max_ktruss'])
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, mincuts_normalized_log2, mincuts_normalized_sqrt, conductances, ktruss_vals)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'connectivity', 'connectivity_normalized_log10(n)', 'connectivity_normalized_log2(n)', 'connectivity_normalized_sqrt(n)/5', 'conductance', 'max_ktruss'])
         else:
-            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, conductances)),
-                    columns =['cluster', 'n', 'm', 'modularity', 'connectivity', 'connectivity_normalized', 'conductance'])
+            df = pd.DataFrame(list(zip(ids, ns, ms, modularities, mincuts, mincuts_normalized, mincuts_normalized_log2, mincuts_normalized_sqrt, conductances)),
+                    columns =['cluster', 'n', 'm', 'modularity', 'connectivity', 'connectivity_normalized_log10(n)', 'connectivity_normalized_log2(n)', 'connectivity_normalized_sqrt(n)/5', 'conductance'])
 
     df.to_csv(outfile, index=False)
     print("Done")
