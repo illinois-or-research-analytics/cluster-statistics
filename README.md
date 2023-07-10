@@ -31,17 +31,20 @@ git submodule update --init --recursive
 ```
 ## Usage
 ### `stats.py`: Collecting stats on a single clustering
-To collect a table of per-cluster statistics for a single clustering, run `stats.py`. `stats.py` takes in the following arguments:
+To collect a table of per-cluster statistics for a single clustering, run `stats.py`. `stats.py` takes in the following arguments:  
+**Required**
 - `-i` or `--input`: The whole network that was clustered. This is a 2-column `.tsv` containing an edge list.
 - `-e` or `--existing-clustering`: The clustering to report statistics. This is a 2-column `.tsv` containing `node_id, cluster_id` pairs.
-- `-c` or `--clusterer`: The clustering algorithm used. Choose from `leiden, leiden_mod, ikc`.
-- `-k` or `--k`: _Only required if the clusterer is IKC_. The `k` parameter used with IKC.
-- `-g` or `--resolution`: _Only required if the clusterer is Leiden or Leiden with Modularity (leiden_mod)_. The resolution parameter used with Leiden.
+  
+**Other Parameters**
+- `-g` or `--resolution`: The resolution parameter (usually if using Leiden algorithm to cluster) to compute CPM statistics
 - `-ub` or `--universal-before`: The `before.json` file that results from CM2Universal in CM/CM++
+- `-n` or `--noktruss`: Dont output k-truss statistics *This speeds up stats.py heavily*
+- `-o` or `--output`: The output file to store stats. Defaults to the input file location with a `_stats.csv` suffix.
   
 So if I want to analyse a Leiden resolution 0.01 clustering of CEN, I simply run the following command.
 ```
-python3 stats.py -i cen_cleaned.tsv -e cen_leiden.01_nontree_n10_clusters_cm.txt -c leiden -g 0.01
+python3 stats.py -i cen_cleaned.tsv -e cen_leiden.01_nontree_n10_clusters_cm.txt -g 0.01
 ```
 ### `ktrusses.py`: Returning k-truss nodes
 Simply take the same command from `stats.py` and replace `stats.py` with `ktrusses.py`. Here is a command to get the k-truss nodes from the statistics output from above:
