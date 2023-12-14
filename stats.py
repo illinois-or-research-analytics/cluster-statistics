@@ -8,11 +8,8 @@ from enum import Enum
 from numpy import log10, log2
 from typing import Dict, List
 
-from clusterers.abstract_clusterer import AbstractClusterer
-from clusterers.ikc_wrapper import IkcClusterer
-from clusterers.leiden_wrapper import LeidenClusterer, Quality
-from graph import Graph, IntangibleSubgraph, RealizedSubgraph
-from mincut import viecut
+from hm01.graph import Graph, IntangibleSubgraph
+from hm01.mincut import viecut
 
 class ClustererSpec(str, Enum):
     """ (VR) Container for Clusterer Specification """  
