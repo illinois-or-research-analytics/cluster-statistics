@@ -5,10 +5,11 @@ import os
 import json
 
 from numpy import log10, log2
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from hm01.graph import Graph, IntangibleSubgraph, RealizedSubgraph
 from hm01.mincut import viecut
+
 
 class Statistics:
     def __init__(self):
@@ -16,21 +17,26 @@ class Statistics:
         self.cluster_stats = None
         self.summary_stats = None
 
-    def from_tsv(self, file) -> List[RealizedSubgraph]:
-        self.filepath = file
-
-    def to_csv(self, regular=True, summary=False, fate=False):
+    def from_tsv(self, clustering_file, graph_file) -> List[RealizedSubgraph]:
+        # TODO: This method should load realized graphs from a clustering tsv and a graph edgelist
+        # NOTE: Feel free to use the method below
         pass
 
-    def compute_stats(self) -> pd.DataFrame:
+    def to_csv(self):
+        # TODO: Save the stats to a csv
         pass
+
+    def to_summary_csv(self):
+        # TODO: Save the summary stats to a csv
+        pass
+
+    def compute_stats(self):
+        # TODO: Compute the stats and save it to a dataframe
+        self.cluster_stats = None   # NOTE: The pandas dataframe to save it to
 
     def compute_summary(self) -> pd.DataFrame:
-        pass
-
-    def cluster_fate(self, before_json) -> pd.DataFrame:
-        pass
-    
+        # TODO: Compute the summary stats and save it to a dataframe
+        self.summary_stats = None
 
 def from_existing_clustering(filepath) -> List[IntangibleSubgraph]:
     ''' I just modified the original method to return a dict mapping from index to clustering '''
@@ -186,7 +192,6 @@ def main(
                 file.write(line + '\n')
         print("\tDone")
         print("Done")
-
 
 def entry_point():
     typer.run(main)
