@@ -6,11 +6,11 @@ import os
 from enum import Enum
 from numpy import log10
 
-from clusterers.abstract_clusterer import AbstractClusterer
-from clusterers.ikc_wrapper import IkcClusterer
-from clusterers.leiden_wrapper import LeidenClusterer, Quality
-from graph import Graph, IntangibleSubgraph, RealizedSubgraph
-from mincut import viecut
+from hm01.clusterers.abstract_clusterer import AbstractClusterer
+from hm01.clusterers.ikc_wrapper import IkcClusterer
+from hm01.clusterers.leiden_wrapper import LeidenClusterer, Quality
+from hm01.graph import Graph, IntangibleSubgraph, RealizedSubgraph
+from hm01.mincut import viecut
 
 class ClustererSpec(str, Enum):
     """ (VR) Container for Clusterer Specification """  

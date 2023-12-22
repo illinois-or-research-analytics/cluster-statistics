@@ -4,19 +4,33 @@ import pandas as pd
 import os
 import json
 
-from enum import Enum
 from numpy import log10, log2
-from typing import Dict, List
+from typing import Dict, List, Union
 
-from hm01.graph import Graph, IntangibleSubgraph
+from hm01.graph import Graph, IntangibleSubgraph, RealizedSubgraph
 from hm01.mincut import viecut
 
+class Statistics:
+    def __init__(self):
+        self.clusters = None
+        self.cluster_stats = None
+        self.summary_stats = None
 
-class ClustererSpec(str, Enum):
-    """ (VR) Container for Clusterer Specification """  
-    leiden = "leiden"
-    ikc = "ikc"
-    leiden_mod = "leiden_mod"
+    def from_tsv(self, file) -> List[RealizedSubgraph]:
+        self.filepath = file
+
+    def to_csv(self, regular=True, summary=False, fate=False):
+        pass
+
+    def compute_stats(self) -> pd.DataFrame:
+        pass
+
+    def compute_summary(self) -> pd.DataFrame:
+        pass
+
+    def cluster_fate(self, before_json) -> pd.DataFrame:
+        pass
+    
 
 def from_existing_clustering(filepath) -> List[IntangibleSubgraph]:
     ''' I just modified the original method to return a dict mapping from index to clustering '''
@@ -38,7 +52,7 @@ def main(
     output: str = typer.Option("", "--output", "-o")
 ): 
     if output == "":
-        base, ext = os.path.splitext(existing_clustering)
+        base, _ = os.path.splitext(existing_clustering)
         outfile = base + '_stats.csv'
     else:
         outfile = output
@@ -50,6 +64,7 @@ def main(
     print("Done")
 
     print("Loading graph...")
+    
     # (VR) Load full graph into Graph object
     edgelist_reader = nk.graphio.EdgeListReader("\t", 0)
     nk_graph = edgelist_reader.read(input)
@@ -57,8 +72,6 @@ def main(
     global_graph = Graph(nk_graph, "")
     ms = [cluster.count_edges(global_graph) for cluster in clusters]
     print("Done")
-
-    # clusters = [cluster.realize(global_graph) for cluster in clusters]
 
     print("Computing modularity...")
     modularities = [global_graph.modularity_of(cluster) for cluster in clusters]
@@ -72,16 +85,6 @@ def main(
     print("Realizing clusters...")
     clusters = [cluster.realize(global_graph) for cluster in clusters]
     print("Done")
-
-    '''
-    G = nx.Graph(clusters[-4].adj)
-
-    # Draw the graph
-    pos = nx.spring_layout(G)  # Positions of the nodes
-    nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=1500, font_size=12, font_weight='bold', font_color='black', edge_color='gray', width=1.5)
-
-    plt.savefig('graph.png', format='png', dpi=300)
-    '''
 
     print("Computing mincut...")
     mincut_results = [viecut(cluster) for cluster in clusters]
